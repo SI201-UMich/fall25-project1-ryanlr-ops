@@ -2,6 +2,9 @@
 # Uniqname: ryanlr
 # Section: 6
 # Project 1: YouTube Data Analysis
+# Collaborators: None
+# Function authorship: All functions written by Ryan Rose
+# AI Usage: Used GitHub Copilot for suggestions, debugging, and code review
 # main.py
 if __name__ == "__main__":
     print("Hello, Project 1!")
@@ -40,11 +43,19 @@ def get_top_song(songs):
 def clean_song_data(songs):
     cleaned = []
     for song in songs:
+        try:
+            view_count = int(song.get('view_count', '0').replace(',', ''))
+        except (ValueError, AttributeError):
+            view_count = 0
+        try:
+            channel_follower_count = int(song.get('channel_follower_count', '0').replace(',', ''))
+        except (ValueError, AttributeError):
+            channel_follower_count = 0
         cleaned_song = {
             'title': song.get('title', ''),
-            'view_count': song.get('view_count', '0'),
+            'view_count': view_count,
             'channel': song.get('channel', ''),
-            'channel_follower_count': song.get('channel_follower_count', '0')
+            'channel_follower_count': channel_follower_count
         }
         cleaned.append(cleaned_song)
     return cleaned
@@ -73,21 +84,45 @@ def average_duration_by_category(songs, category):
 if __name__ == "__main__":
     csv_path = "youtube-top-100-songs-2025.csv"
     songs = read_youtube_csv(csv_path)
-    print(f"Loaded {len(songs)} songs from CSV.")
-    for song in songs[:5]:
-        print(song)
     cleaned_songs = clean_song_data(songs)
-    print(f"Loaded {len(cleaned_songs)} cleaned songs from CSV.")
-    for song in cleaned_songs[:5]:
-        print(song)
+
+    print("\n===== YouTube Top 100 Songs 2025: Summary Stats =====")
+    print(f"Total songs loaded: {len(songs)}")
 
     top_song = get_top_song(cleaned_songs)
-    print("Top song by view count:")
-    print(top_song)
+    print("\nTop song by view count:")
+    if top_song:
+        print(f"  Title: {top_song['title']}")
+        print(f"  Channel: {top_song['channel']}")
+        print(f"  View count: {top_song['view_count']:,}")
+        print(f"  Channel followers: {top_song['channel_follower_count']:,}")
+    else:
+        print("  No data available.")
 
-    avg_duration = average_duration_by_category(songs, 'Pop')
+
+
+
+
+    avg_duration = average_duration_by_category(songs, 'Music')
+    print(f"\nAverage duration for Music songs: {avg_duration:.2f} seconds")
 
     percent_above = percent_songs_above_follower_threshold(cleaned_songs, 1000000)
+    print(f"\nPercent of songs with channel followers > 1M: {percent_above:.2f}%")
+
+
+    # Print top 10 songs with all relevant data fields
+    print("Top 10 Songs by View Count:")
+    top_10 = get_top_songs_by_views(cleaned_songs, 10)
+    for i, song in enumerate(top_10, 1):
+        print(f"{i}. Title: {song['title']}")
+        print(f"   Channel: {song['channel']}")
+        print(f"   View count: {song['view_count']:,}")
+        # Find the full song dict to get channel_follower_count if needed
+        full_song = next((s for s in cleaned_songs if s['title'] == song['title'] and s['channel'] == song['channel']), None)
+        if full_song:
+            print(f"   Channel followers: {full_song['channel_follower_count']:,}")
+        print()
+    print("====================================================\n")
 
     write_txt_output("results.txt", top_song, avg_duration, percent_above)
     write_csv_output("top_songs.csv", get_top_songs_by_views(cleaned_songs, 10))
