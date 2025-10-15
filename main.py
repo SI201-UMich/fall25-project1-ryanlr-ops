@@ -2,9 +2,8 @@
 # Uniqname: ryanlr
 # Section: 6
 # Project 1: YouTube Data Analysis
-# Collaborators: None
-# Function authorship: All functions written by Ryan Rose
-# AI Usage: Used GitHub Copilot for suggestions, debugging, and code review
+# Collaborators: Aaron Rose and Joe Dillon
+# AI Usage: Used chat gpt for suggestions, debugging, and and suggest solutions when I was stuck on data processing and output formatting.
 # main.py
 if __name__ == "__main__":
     print("Hello, Project 1!")
@@ -110,14 +109,13 @@ if __name__ == "__main__":
     print(f"\nPercent of songs with channel followers > 1M: {percent_above:.2f}%")
 
 
-    # Print top 10 songs with all relevant data fields
     print("Top 10 Songs by View Count:")
     top_10 = get_top_songs_by_views(cleaned_songs, 10)
     for i, song in enumerate(top_10, 1):
         print(f"{i}. Title: {song['title']}")
         print(f"   Channel: {song['channel']}")
         print(f"   View count: {song['view_count']:,}")
-        # Find the full song dict to get channel_follower_count if needed
+
         full_song = next((s for s in cleaned_songs if s['title'] == song['title'] and s['channel'] == song['channel']), None)
         if full_song:
             print(f"   Channel followers: {full_song['channel_follower_count']:,}")
