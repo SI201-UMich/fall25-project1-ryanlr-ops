@@ -1,9 +1,8 @@
-# Name: YOUR NAME HERE
-# Uniqname: YOUR_UNIQNAME_HERE
-# Section: YOUR_SECTION_HERE
+# Name: Ryan Rose
+# Uniqname: ryanlr
+# Section: 6
+# Project 1: YouTube Data Analysis
 # main.py
-# Start your Project 1 code here.
-
 if __name__ == "__main__":
     print("Hello, Project 1!")
 import csv
@@ -55,9 +54,7 @@ def read_youtube_csv(filepath):
         reader = csv.DictReader(csvfile)
         return [row for row in reader]
 
-# --- moved up so they're defined before use ---
 def get_top_songs_by_views(songs, n):
-    # Reference at least 3 columns: title, view_count, channel
     sorted_songs = sorted(songs, key=lambda x: int(x['view_count']), reverse=True)
     return [{
         'title': song['title'],
@@ -66,14 +63,12 @@ def get_top_songs_by_views(songs, n):
     } for song in sorted_songs[:n]]
 
 def average_duration_by_category(songs, category):
-    # Reference at least 3 columns: duration, categories, title
     filtered = [s for s in songs if category in s['categories']]
     if not filtered:
         return 0
     total_duration = sum(int(s['duration']) for s in filtered)
     avg = total_duration / len(filtered)
     return avg
-# --- end moved section ---
 
 if __name__ == "__main__":
     csv_path = "youtube-top-100-songs-2025.csv"
@@ -86,18 +81,13 @@ if __name__ == "__main__":
     for song in cleaned_songs[:5]:
         print(song)
 
-    # Print the top song by view count automatically
     top_song = get_top_song(cleaned_songs)
     print("Top song by view count:")
     print(top_song)
 
-    # Calculation 1: Average duration for Pop songs
-    # (Assumes original songs list has 'duration' and 'categories')
     avg_duration = average_duration_by_category(songs, 'Pop')
 
-    # Calculation 2: Percent of songs with channel followers > 1,000,000
     percent_above = percent_songs_above_follower_threshold(cleaned_songs, 1000000)
 
-    # Write results to output files
     write_txt_output("results.txt", top_song, avg_duration, percent_above)
     write_csv_output("top_songs.csv", get_top_songs_by_views(cleaned_songs, 10))
