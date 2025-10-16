@@ -2,7 +2,7 @@
 # Uniqname: ryanlr
 # Section: 6
 # Project 1: YouTube Data Analysis
-# Collaborators: Aaron Rose and Joe Dillon
+# Collaborators: Aaron Rose 
 # AI Usage: Used chat gpt for suggestions, debugging, and and suggest solutions when I was stuck on data processing and output formatting.
 # main.py
 if __name__ == "__main__":
@@ -122,5 +122,49 @@ if __name__ == "__main__":
         print()
     print("====================================================\n")
 
+
     write_txt_output("results.txt", top_song, avg_duration, percent_above)
     write_csv_output("top_songs.csv", get_top_songs_by_views(cleaned_songs, 10))
+
+# =====================
+# Test Functions Below
+# =====================
+def test_get_top_song():
+    songs = [
+        {'title': 'A', 'view_count': 100, 'channel': 'X', 'channel_follower_count': 1000},
+        {'title': 'B', 'view_count': 200, 'channel': 'Y', 'channel_follower_count': 2000},
+        {'title': 'C', 'view_count': 150, 'channel': 'Z', 'channel_follower_count': 1500}
+    ]
+    assert get_top_song(songs)['title'] == 'B', "Should return song with highest view_count"
+    assert get_top_song([]) is None, "Should return None for empty list"
+
+def test_average_duration_by_category():
+    songs = [
+        {'categories': 'Music', 'duration': '200', 'title': 'A'},
+        {'categories': 'Music', 'duration': '300', 'title': 'B'},
+        {'categories': 'Other', 'duration': '400', 'title': 'C'}
+    ]
+    assert average_duration_by_category(songs, 'Music') == 250, "Average should be 250 for Music"
+    assert average_duration_by_category(songs, 'Other') == 400, "Average should be 400 for Other"
+    assert average_duration_by_category([], 'Music') == 0, "Should return 0 for empty list"
+    assert average_duration_by_category(songs, 'Pop') == 0, "Should return 0 if no match"
+
+def test_percent_songs_above_follower_threshold():
+    songs = [
+        {'channel_follower_count': 1000},
+        {'channel_follower_count': 2000},
+        {'channel_follower_count': 3000}
+    ]
+    assert percent_songs_above_follower_threshold(songs, 1500) == (2/3)*100, "Should be 66.67%"
+    assert percent_songs_above_follower_threshold([], 1000) == 0, "Should return 0 for empty list"
+    assert percent_songs_above_follower_threshold(songs, 5000) == 0, "Should return 0 if none above threshold"
+
+def run_tests():
+    test_get_top_song()
+    test_average_duration_by_category()
+    test_percent_songs_above_follower_threshold()
+    print("All tests passed!")
+
+if __name__ == "__main__":
+    print("\nRunning tests...")
+    run_tests()
